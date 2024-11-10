@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, BadRequestException, Put, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, BadRequestException, Put, Delete, UseGuards, Req, UnauthorizedException, Request } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovie, UpdateMovie } from './movie.type';
 import { Movie } from './schema/movie.schema';
@@ -11,26 +11,29 @@ export class UserController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createMovie(@Req() req, @Body() createMovie: CreateMovie): Promise<Movie> {
-    createMovie.user_id=req.userId;
+  async createMovie(@Request() req, @Body() createMovie: CreateMovie): Promise<CreateMovie> {
+    createMovie.userId=req.user.userId;
     return this.movieService.create(createMovie);
   }
+  
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async updateMovie(@Req() req, @Body() updateMovie: UpdateMovie){
-    return this.movieService.update(req.userId,updateMovie);
+  async updateMovie(@Request() req, @Body() updateMovie: UpdateMovie){
+    return this.movieService.update(req.user.userId,updateMovie);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getMovies(@Req() req): Promise<Movie[]>{
-    return this.movieService.getMoviesByUserId(req.userId);
+  async getMovies(@Request() req): Promise<Movie[]>{
+    return this.movieService.getMoviesByUserId(req.user.userId);
   }
 
-  @Delete()
+  @Delete(":id")
   @UseGuards(JwtAuthGuard)
-  async deleteMovie(@Req() req, @Body() movieId:string ): Promise<Movie>{
-    return this.movieService.delete(req.userId,movieId);
+  async deleteMovie(@Request() req, @Param('id') id:string): Promise<Movie>{
+    if(!Types.ObjectId.isValid(id))
+      throw new BadRequestException('Invalid id : '+id);
+    return this.movieService.delete(req.user.userId,id);
   }
 }

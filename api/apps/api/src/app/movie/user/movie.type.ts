@@ -1,6 +1,6 @@
 export class CreateMovie {
     readonly title: string;
-    user_id: string;
+    userId: string;
     readonly rating?: number;
 }
 
