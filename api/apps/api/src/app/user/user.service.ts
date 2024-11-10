@@ -1,5 +1,4 @@
-// src/user/user.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schema/user.schema';
@@ -16,6 +15,8 @@ export class UserService {
   }
 
   async getUserById(id: string): Promise<User>{
+    if(!Types.ObjectId.isValid(id))
+      throw new BadRequestException('Invalid id : '+id);
     return this.userModel.findById(id).exec();
   }
 
