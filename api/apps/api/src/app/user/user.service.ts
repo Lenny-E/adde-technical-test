@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schema/user.schema';
-import { CreateUser, UpdateUser } from './user.type';
+import { CreateUser } from './user.type';
 import * as argon2 from 'argon2'
 
 @Injectable()

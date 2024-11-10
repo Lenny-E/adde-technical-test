@@ -4,12 +4,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Movie } from './schema/movie.schema';
 import { CreateMovie, UpdateMovie } from './movie.type';
+import * as validator from '../../../../../../shared/src/index';
 
 @Injectable()
 export class MovieService {
   constructor(@InjectModel(Movie.name) private movieModel: Model<Movie>) {}
 
   async create(createMovie: CreateMovie): Promise<Movie> {
+    createMovie.title=validator.delete_xss(createMovie.title);
     return new this.movieModel(createMovie).save();
   }
 
@@ -21,6 +23,7 @@ export class MovieService {
   }
 
   async update(userId : string, updateMovie: UpdateMovie): Promise<Movie> {
+    updateMovie.title=validator.delete_xss(updateMovie.title);
     const { id, ...updateData } = updateMovie;
     const movie = this.movieModel.findOne({userId,id}).exec();
     if (!movie)

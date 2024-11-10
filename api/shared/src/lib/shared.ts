@@ -1,5 +1,5 @@
 export function verify_password(password : string) : boolean{
-  return password.length > 3;
+  return password.length > 5;
 }
 
 export function verify_email(email : string) : boolean{

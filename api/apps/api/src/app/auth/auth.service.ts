@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UserService } from '../user/user.service';
 import { CreateUser } from '../user/user.type';
-import { User } from '../user/schema/user.schema';
 import * as validator from '../../../../../shared/src/index';
 
 @Injectable()
@@ -24,7 +23,8 @@ export class AuthService {
   }
 
   async register(createUser : CreateUser) {
-    this.validate_input(createUser)
+    if(!this.validate_input(createUser))
+      throw new BadRequestException("Invalid data")
     createUser.role="user";
     try{
       const user = await this.userService.create(createUser);
@@ -45,7 +45,7 @@ export class AuthService {
     return argon2.verify(user.password, password);
   }
 
-  async validate_input(createUser : CreateUser) : Promise<boolean>{
-    return validator.verify_email(createUser.email) && validator.verify_password(createUser.password) && validator.verify_name(createUser.username);
+  validate_input(createUser : CreateUser) : boolean{
+    return (validator.verify_email(createUser.email) && validator.verify_password(createUser.password) && validator.verify_name(createUser.username));
   }
 }
