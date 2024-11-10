@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Get, Param, BadRequestException, Put, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, BadRequestException, Put, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovie, UpdateMovie } from './movie.type';
 import { Movie } from './schema/movie.schema';
 import { JwtAuthGuard } from '../../auth/auth.guard';
+import { Types } from 'mongoose';
 
 @Controller('movies')
 export class UserController {
@@ -10,14 +11,15 @@ export class UserController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createMovie(@Body() createMovie: CreateMovie): Promise<Movie> {
+  async createMovie(@Req() req, @Body() createMovie: CreateMovie): Promise<Movie> {
+    createMovie.user_id=req.userId;
     return this.movieService.create(createMovie);
   }
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async updateMovie(@Body() updateMovie: UpdateMovie){
-    return this.movieService.update(updateMovie);
+  async updateMovie(@Req() req, @Body() updateMovie: UpdateMovie){
+    return this.movieService.update(req.userId,updateMovie);
   }
 
   @Get()
@@ -28,7 +30,7 @@ export class UserController {
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  async deleteMovie(): Promise<Movie>{
-    return this.movieService.delete("test","test");
+  async deleteMovie(@Req() req, @Body() movieId:string ): Promise<Movie>{
+    return this.movieService.delete(req.userId,movieId);
   }
 }

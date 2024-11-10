@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, BadRequestException, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, BadRequestException, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUser } from './user.type';
 import { User } from './schema/user.schema';
@@ -11,13 +11,17 @@ export class UserController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async createUser(@Body() createUser: CreateUser): Promise<User> {
+  async createUser(@Req() req,@Body() createUser: CreateUser): Promise<User> {
+    if(req.role!=='admin')
+      throw new UnauthorizedException("Unauthorized");
     return this.userService.create(createUser);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async getUser(@Param('id') id:string): Promise<User>{
+  async getUser(@Req() req, @Param('id') id:string): Promise<User>{
+    if(req.role!=='admin')
+      throw new UnauthorizedException("Unauthorized");
     if(!Types.ObjectId.isValid(id))
       throw new BadRequestException('Invalid id : '+id);
     return this.userService.getUserById(id);
@@ -25,7 +29,9 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUsers(): Promise<User[]>{
+  async getUsers(@Req() req): Promise<User[]>{
+    if(req.role!=='admin')
+      throw new UnauthorizedException("Unauthorized");
     return this.userService.getAllUsers();
   }
 }

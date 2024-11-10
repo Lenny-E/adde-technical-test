@@ -1,5 +1,5 @@
 // src/user/user.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Movie } from './schema/movie.schema';
@@ -14,21 +14,24 @@ export class MovieService {
   }
 
   async getMoviesByUserId(userId: string): Promise<Movie[]> {
-    const movies = await this.movieModel.find({userId}).exec();
+    const movies = await this.movieModel.find({userId}).select("-userId").exec();
     if (!movies || movies.length === 0)
       throw new NotFoundException('No movie found');
     return movies;
   }
 
-  async update(updateMovie: UpdateMovie): Promise<Movie> {
+  async update(userId : string, updateMovie: UpdateMovie): Promise<Movie> {
     const { id, ...updateData } = updateMovie;
-    return this.movieModel.findByIdAndUpdate(id, updateData, {new: true});
+    const movie = this.movieModel.findOne({userId,id}).exec();
+    if (!movie)
+      throw new NotFoundException('No such movie to update');
+    return this.movieModel.findByIdAndUpdate(id, updateData, {new: true}).select("-userId");
   }
 
   async delete(userId: string, movieId: string): Promise<Movie>{
     const movie = await this.movieModel.findOne({userId,_id:movieId}).exec();
     if(!movie)
-      throw new NotFoundException('No movie found');
-    return await this.movieModel.findByIdAndDelete(movieId);
+      throw new NotFoundException('No such movie to delete');
+    return await this.movieModel.findByIdAndDelete(movieId).select("-userId");
   }
 }
