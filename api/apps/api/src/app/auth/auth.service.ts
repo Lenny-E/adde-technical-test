@@ -20,7 +20,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
 
     const payload = { sub: user.id , role: user.role };
-    return {access_token: this.jwtService.sign(payload)};
+    return {access_token: this.jwtService.sign(payload), role: user.role};
   }
 
   async register(createUser : CreateUser) {
@@ -28,7 +28,7 @@ export class AuthService {
     createUser.role="user";
     try{
       const user = await this.userService.create(createUser);
-      const payload = { sub: user._id , role: user.role };
+      const payload = {sub: user._id, role: user.role};
       return {access_token: this.jwtService.sign(payload)};
     } catch (error) {
       if (error.code === 11000)
@@ -46,6 +46,6 @@ export class AuthService {
   }
 
   async validate_input(createUser : CreateUser) : Promise<boolean>{
-    return validator.verify_email(createUser.email) && validator.verify_password(createUser.password) && validator.verify_name(createUser.name);
+    return validator.verify_email(createUser.email) && validator.verify_password(createUser.password) && validator.verify_name(createUser.username);
   }
 }

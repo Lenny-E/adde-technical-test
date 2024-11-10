@@ -1,6 +1,6 @@
 export class CreateUser {
     readonly email: string;
-    readonly name: string;
+    readonly username: string;
     password: string;
     role?: string;
 }
