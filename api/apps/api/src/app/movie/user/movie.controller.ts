@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../../auth/auth.guard';
 import { Types } from 'mongoose';
 
 @Controller('movies')
-export class UserController {
+export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Post()

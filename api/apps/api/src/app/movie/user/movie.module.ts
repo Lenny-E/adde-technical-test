@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MovieService } from './movie.service';
-import { UserController } from './movie.controller';
+import { MovieController } from './movie.controller';
 import { Movie, MovieSchema } from './schema/movie.schema';
 import { AuthModule } from '../../auth/auth.module';
 
@@ -11,7 +11,7 @@ import { AuthModule } from '../../auth/auth.module';
     AuthModule,
   ],
   providers: [MovieService],
-  controllers: [UserController],
+  controllers: [MovieController],
   exports: [MovieService],
 })
 export class MovieModule {}
