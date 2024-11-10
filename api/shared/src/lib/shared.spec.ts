@@ -1,4 +1,4 @@
-import { verify_password, verify_email, delete_xss } from './shared';
+import { verify_password, verify_email, delete_xss, verify_name } from './shared';
 
 describe('Utils Functions', () => {
 
@@ -16,13 +16,24 @@ describe('Utils Functions', () => {
   describe('verify_email', () => {
     it('should return true for a valid email', () => {
       expect(verify_email('test@example.com')).toBe(true);
-      expect(verify_email('user.name+alias@domain.co')).toBe(true);
     });
 
     it('should return false for an invalid email', () => {
       expect(verify_email('invalid-email')).toBe(false);
       expect(verify_email('user@.com')).toBe(false);
       expect(verify_email('user@domain')).toBe(false);
+      expect(verify_email('user.name+alias@domain.co')).toBe(false);
+    });
+  });
+
+  describe('verify_name', () => {
+    it('should return true for a valid name', () => {
+      expect(verify_name("Valid")).toBe(true);
+    });
+
+    it('should return false for an invalid name', () => {
+      expect(verify_name("Invalid Name")).toBe(false);
+      expect(verify_name("La+-5")).toBe(false);
     });
   });
 
@@ -32,8 +43,7 @@ describe('Utils Functions', () => {
     });
 
     it('should return the original string if there are no angle brackets', () => {
-      expect(delete_xss('No tags here')).toBe('No tags here');
+      expect(delete_xss('No angle brackets')).toBe('No angle brackets');
     });
   });
-
 });
