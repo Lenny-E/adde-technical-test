@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UserService } from '../user/user.service';
@@ -11,7 +11,6 @@ export class AuthService {
   constructor(private jwtService: JwtService, private userService: UserService) {}
 
   async login(mail: string, password: string) {
-
     const user = await this.userService.getUserByMail(mail);
     if (!user)
       throw new UnauthorizedException('Invalid credentials');
@@ -26,17 +25,29 @@ export class AuthService {
     };
   }
 
-  async register(createUser : CreateUser) : Promise<User>{
-    if(!this.validate_input(createUser))
-      throw new BadRequestException("Invalid input data");
-    return this.userService.create(createUser);
+  async register(createUser : CreateUser) {
+    this.validate_input(createUser)
+    createUser.role="user";
+    try{
+      const user = await this.userService.create(createUser);
+      const payload = { sub: user._id , role: user.role };
+      return {
+        access_token: this.jwtService.sign(payload),
+        id: user,
+      };
+    } catch (error) {
+      if (error.code === 11000)
+        throw new ConflictException('Email is already in use');
+      throw new BadRequestException("Missing field in data");
+    }
   }
 
   async validate_password(userId: string, password: string): Promise<boolean> {
     const user = await this.userService.getUserById(userId)
+    console.log(user.password)
     if (!user)
       return false
-    return argon2.verify(user.username, password);
+    return argon2.verify(user.password, password);
   }
 
   async validate_input(createUser : CreateUser) : Promise<boolean>{
