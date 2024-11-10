@@ -26,4 +26,11 @@ export class UserService {
   async getAllUsers(): Promise<User[]> {
     return this.userModel.find().exec();
   }
+
+  async deleteUserByMail(email: string): Promise<any> {
+    const user = await this.userModel.findOne({email}).exec();
+    if (!user)
+      throw new NotFoundException(`User with email ${email} not found`);
+    return this.userModel.findByIdAndDelete(user._id);
+  }
 }

@@ -35,7 +35,7 @@ describe('POST /api/auth/register', () => {
 
     const res = await axios.post('/api/auth/register', newUser);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
 
     expect(res.data).toHaveProperty('role');
     expect(res.data).toHaveProperty('access_token');
@@ -89,3 +89,25 @@ describe('POST /login', () => {
   });
 });
 
+describe('Admin', () => {
+  it('should delete a user', async () => {
+    const user = {
+      "email": "admin2@example.com",
+      "password": "plaintext"
+    };
+
+    const res = await axios.post('/api/auth/login', user);
+    expect(res.data).toHaveProperty('role');
+    expect(res.data).toHaveProperty('access_token');
+    const token = res.data.access_token;
+    const deleteRes = await axios.delete('/api/users', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        email: "newFreshUser@example.com",
+      },
+    });
+    expect(deleteRes.status).toBe(200);
+  });
+})

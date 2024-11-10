@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, BadRequestException, UseGuards, Req, UnauthorizedException, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, BadRequestException, UseGuards, Req, UnauthorizedException, Request, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUser } from './user.type';
 import { User } from './schema/user.schema';
@@ -34,4 +34,13 @@ export class UserController {
       throw new UnauthorizedException("Unauthorized");
     return this.userService.getAllUsers();
   }
+
+  @Delete()
+  @UseGuards(JwtAuthGuard)
+  async deleteUserByEmail(@Request() req, @Body() body: { email: string }): Promise<any> {
+    if(req.user.role!=='admin')
+      throw new UnauthorizedException("Unauthorized");
+    return this.userService.deleteUserByMail(body.email);
+  } 
+
 }
