@@ -3,7 +3,7 @@ import { MovieService } from './movie.service';
 import { CreateMovie, UpdateMovie } from './movie.type';
 import { Movie } from './schema/movie.schema';
 
-@Controller('users')
+@Controller('movies')
 export class UserController {
   constructor(private readonly movieService: MovieService) {}
 

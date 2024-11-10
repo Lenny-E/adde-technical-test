@@ -12,4 +12,4 @@ import { Movie, MovieSchema } from './schema/movie.schema';
   controllers: [UserController],
   exports: [MovieService],
 })
-export class UserModule {}
+export class MovieModule {}
