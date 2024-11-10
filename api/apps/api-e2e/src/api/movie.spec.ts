@@ -10,7 +10,7 @@ describe('User registration and movie creation', () => {
         password: 'strongpassword',
         };
 
-        const res = await axios.post('http://localhost:3000/api/auth/register', newUser);
+        const res = await axios.post('/api/auth/register', newUser);
         
         expect(res.status).toBe(201);
         expect(res.data).toHaveProperty('access_token');
