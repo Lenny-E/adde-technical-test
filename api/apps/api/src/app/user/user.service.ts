@@ -15,8 +15,12 @@ export class UserService {
     return new this.userModel(createUser).save();
   }
 
-  async getUserById(id: String): Promise<User>{
+  async getUserById(id: string): Promise<User>{
     return this.userModel.findById(id).exec();
+  }
+
+  async getUserByMail(email: string): Promise<User>{
+    return this.userModel.findOne({email}).exec();
   }
 
   async getAllUsers(): Promise<User[]> {
