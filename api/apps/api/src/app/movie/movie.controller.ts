@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Param, BadRequestException, Put, Delete, U
 import { MovieService } from './movie.service';
 import { CreateMovie, UpdateMovie } from './movie.type';
 import { Movie } from './schema/movie.schema';
-import { JwtAuthGuard } from '../../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/auth.guard';
 import { Types } from 'mongoose';
 
 @Controller('movies')

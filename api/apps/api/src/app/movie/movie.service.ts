@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Movie } from './schema/movie.schema';
 import { CreateMovie, UpdateMovie } from './movie.type';
-import * as validator from '../../../../../../shared/src/index';
+import * as validator from '../../../../../shared/src/index';
 
 @Injectable()
 export class MovieService {
